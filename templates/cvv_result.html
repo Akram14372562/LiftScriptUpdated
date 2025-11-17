@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVV Checker Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CVV Checker Results</h1>
+        </header>
+        
+        <div class="result-summary">
+            <div class="info-box">
+                <h3>Processing Summary</h3>
+                <p><strong>Accounts Processed:</strong> {{ total_processed }}</p>
+                <p><strong>Account Range:</strong> {{ start_account }} to {{ end_account }}</p>
+                <p><strong>Proxy Used:</strong> {{ proxy_used }}</p>
+            </div>
+        </div>
+
+        <div class="batch-results">
+            <h3>CVV Test Results</h3>
+            
+            {% for result in cvv_results %}
+            <fieldset class="result-fieldset">
+                <legend>
+                    CVV Checker - Account [{{ result.account_index }}/{{ result.end_account }}]: {{ result.account_number }} → Card [{{ result.card_index + 1 }}/{{ result.total_cards }}]
+                </legend>
+                
+                {% for test in result.tests %}
+                <div class="cvv-test {% if test.success %}cvv-success{% else %}cvv-error{% endif %}">
+                    <strong>{{ test.name }}:</strong><br>
+                    {{ test.message }}
+                    {% if test.http_code %}(HTTP: {{ test.http_code }}){% endif %}
+                </div>
+                {% endfor %}
+            </fieldset>
+            {% endfor %}
+        </div>
+
+        <div class="btn-group">
+            <a href="{{ url_for('index') }}?ol={{ ol }}" class="btn-primary">Back to Dashboard</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary">New Session</a>
+        </div>
+    </div>
+</body>
+</html>

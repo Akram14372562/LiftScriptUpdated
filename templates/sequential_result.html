@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequential Processing Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Sequential Processing Results</h1>
+        </header>
+        
+        <div class="result-summary">
+            <div class="info-box">
+                <h3>Processing Summary</h3>
+                <p><strong>Accounts Processed:</strong> {{ total_processed }}</p>
+                <p><strong>Account Range:</strong> {{ start_account }} to {{ end_account }}</p>
+                <p><strong>Proxy Used:</strong> {{ proxy_used }}</p>
+            </div>
+        </div>
+
+        <div class="batch-results">
+            <h3>Detailed Results</h3>
+            
+            {% for result in sequential_results %}
+            <fieldset class="result-fieldset">
+                <legend>
+                    {% if result.type == 'account_card' %}
+                    Account [{{ result.account_index }}/{{ result.end_account }}]: {{ result.account_number }} → Card [{{ result.card_index + 1 }}/{{ result.total_cards }}]
+                    {% else %}
+                    Account [{{ result.account_index }}]: Error
+                    {% endif %}
+                </legend>
+                
+                {% if result.type == 'account_card' %}
+                    {% for test in result.tests %}
+                    <div class="result-item {% if test.type == 'success' %}result-success{% else %}result-error{% endif %}">
+                        <strong>Card {{ result.card_index + 1 }}:</strong> {{ test.message }}
+                        {% if test.http_code %}<br>HTTP Code: {{ test.http_code }}{% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="result-item result-error">{{ result.message }}</div>
+                {% endif %}
+            </fieldset>
+            {% endfor %}
+        </div>
+
+        <div class="btn-group">
+            <a href="{{ url_for('index') }}?ol={{ ol }}" class="btn-primary">Back to Dashboard</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary">New Session</a>
+        </div>
+    </div>
+</body>
+</html>

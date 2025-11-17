@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Card Processing Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Single Card Processing Result</h1>
+        </header>
+        
+        <div class="result-summary">
+            <div class="info-box">
+                <h3>Processing Details</h3>
+                <p><strong>Account:</strong> [{{ ol }}/{{ count1 }}] {{ number }}</p>
+                <p><strong>Card:</strong> {{ card_no[:6] }}******{{ card_no[-4:] }}</p>
+                <p><strong>Proxy Used:</strong> {{ proxy_used }}</p>
+            </div>
+        </div>
+        
+        {% if error %}
+        <div class="message error">{{ error|safe }}</div>
+        {% endif %}
+        
+        {% if success %}
+        <div class="message success">{{ success|safe }}</div>
+        {% endif %}
+        
+        {% if warning %}
+        <div class="message warning">{{ warning|safe }}</div>
+        {% endif %}
+
+        {% if cards %}
+        <div class="card-list">
+            <h3>Your Cards:</h3>
+            {% for card in cards %}
+            <div class="card-item">
+                <strong>Card {{ card.index }}:</strong><br>
+                **** **** **** {{ card.last_four }}<br>
+                {{ card.type }} - {{ card.funding_type }}{{ card.product_code }}{{ card.is_default }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="btn-group">
+            <a href="{{ url_for('index') }}?ol={{ ol }}" class="btn-primary">Back to Dashboard</a>
+            <a href="{{ url_for('index') }}" class="btn-secondary">New Session</a>
+        </div>
+    </div>
+</body>
+</html>
